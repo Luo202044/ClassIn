@@ -1,5 +1,5 @@
 // music-player.js - 音乐播放器核心功能
-// 独立文件，可在多个页面中使用
+// 存储位置: https://classin.luoqing5203789.dpdns.org/system/api/music-player.js
 
 document.addEventListener('DOMContentLoaded', function() {
     // 播放器状态
@@ -12,10 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // GitHub音乐仓库配置 - 需要替换为你的实际信息
     const musicConfig = {
-        // 请替换为你的GitHub用户名和仓库名
+        // ========== 重要：请替换为你的GitHub音乐仓库Pages地址 ==========
         // 格式: https://用户名.github.io/仓库名/
         baseUrl: "https://你的用户名.github.io/你的音乐仓库名/",
         apiFile: "api.txt",
+        // ===========================================================
         
         // 获取Api.txt文件的完整URL
         getApiUrl() {
@@ -339,72 +340,4 @@ document.addEventListener('DOMContentLoaded', function() {
         // 音频错误事件
         audio.addEventListener('error', (e) => {
             console.error("音频加载错误:", e);
-            playerStatus.textContent = '音频加载失败';
-        });
-        
-        // 音频结束事件 - 自动播放下一首
-        audio.addEventListener('ended', () => {
-            console.log("歌曲播放结束");
-            if (playerState.playlist.length > 1) {
-                nextSong();
-            } else {
-                pauseSong();
-            }
-        });
-        
-        // 播放器展开/收起
-        playerHandle.addEventListener('click', togglePlayer);
-        
-        // 键盘快捷键
-        document.addEventListener('keydown', (e) => {
-            // 空格键切换播放/暂停
-            if (e.code === 'Space' && !e.target.matches('input, textarea')) {
-                e.preventDefault();
-                togglePlayPause();
-            }
-            
-            // 左箭头上一首，右箭头下一首（Ctrl+方向键）
-            if (e.code === 'ArrowLeft' && e.ctrlKey) {
-                prevSong();
-            }
-            if (e.code === 'ArrowRight' && e.ctrlKey) {
-                nextSong();
-            }
-        });
-        
-        // 点击页面其他区域收起播放器（可选功能）
-        document.addEventListener('click', (e) => {
-            // 如果播放器是展开状态，并且点击的不是播放器本身
-            if (!musicPlayerContainer.classList.contains('collapsed') &&
-                !musicPlayerContainer.contains(e.target) &&
-                e.target !== playerHandle &&
-                !playerHandle.contains(e.target)) {
-                
-                // 收起播放器
-                musicPlayerContainer.classList.add('collapsed');
-                playerHandle.innerHTML = '<i class="fas fa-chevron-left"></i>';
-                playerHandle.title = "展开播放器";
-                console.log("点击外部区域，收起播放器");
-            }
-        });
-    }
-
-    // 初始化播放器
-    initPlayer();
-    
-    // 全局导出（可选，方便调试）
-    window.musicPlayer = {
-        play: playSong,
-        pause: pauseSong,
-        togglePlayPause: togglePlayPause,
-        prevSong: prevSong,
-        nextSong: nextSong,
-        loadSong: loadSong,
-        togglePlayer: togglePlayer,
-        getState: () => ({ ...playerState }),
-        getCurrentSong: () => playerState.playlist[playerState.currentSongIndex] || null,
-        getPlaylist: () => [...playerState.playlist],
-        fetchPlaylistFromGitHub: fetchPlaylistFromGitHub,
-        musicConfig: musicConfig
-    };
-});
+            playerStatus.textContent = '音频
