@@ -1,10 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>四季亭导航站 | 首页</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入音乐播放器CSS -->
+    <link rel="stylesheet" href="music-player.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
         body { background-color: #FFE6F2; color: #5A003A; line-height: 1.6; min-height: 100vh; }
@@ -221,13 +223,14 @@
                 <p>1</p>
             </div>
 
-            <!-- 公告卡片3 -->
+            <!-- 公告卡片4 -->
             <div class="announcement-card">
                 <h3><i class="fas fa-calendar-alt"></i> 未添加</h3>
                 <p>公告内容未添加，敬请期待后续更新。</p>
                 <p>1</p>
             </div>
-                         <!-- 公告卡片0 - 粉色按钮卡片 -->
+                         
+            <!-- 公告卡片0 - 粉色按钮卡片 -->
             <div class="announcement-card pink-button-card">
                 <h3><i class="fas fa-newspaper"></i> 友链</h3>
                 <p>本站下载服务由雨云提供计算服务</p>
@@ -242,8 +245,57 @@
         <p>© 2026 四季亭 </p>
     </footer>
     
+    <!-- 音乐播放器控件 - 固定定位在浏览器右侧边缘 -->
+    <div id="music-player-container" class="collapsed">
+        <!-- 箭头按钮 - 始终可见 -->
+        <div id="player-handle" title="展开/收起播放器">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+
+        <!-- 播放器主体面板 - 简化版 -->
+        <div id="music-player">
+            <!-- 当前播放信息 -->
+            <div class="now-playing">
+                <div class="song-title" id="current-song-title">等待加载音乐...</div>
+                <div class="song-artist" id="current-song-artist">四季亭音乐库</div>
+            </div>
+
+            <!-- 播放进度条 -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time-info">
+                    <span id="current-time-display">0:00</span>
+                    <span id="total-time-display">0:00</span>
+                </div>
+            </div>
+
+            <!-- 播放控制按钮 -->
+            <div class="player-controls">
+                <button class="control-btn" id="prev-btn" title="上一首">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-pause" id="play-btn" title="播放">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn" id="next-btn" title="下一首">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+
+            <!-- 状态指示器 -->
+            <div class="player-status" id="player-status">准备就绪</div>
+        </div>
+    </div>
+    
+    <!-- 引入音乐播放器控制JS -->
+    <script src="music-player.js"></script>
+    
+    <!-- 原有的脚本 -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // 原有的脚本保持不变
             // 为所有内部链接添加平滑滚动效果
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
