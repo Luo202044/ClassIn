@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const musicConfig = {
         // ========== 重要：请替换为你的GitHub音乐仓库Pages地址 ==========
         // 格式: https://用户名.github.io/仓库名/
-        baseUrl: "https://你的用户名.github.io/你的音乐仓库名/",
+        baseUrl: "https://luo202044.github.io/classinapi/",
         apiFile: "api.txt",
         // ===========================================================
         
