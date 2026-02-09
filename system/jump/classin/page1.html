@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classin群聊 | 四季亭导航站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+        body { background-color: #FFE6F2; color: #5A003A; line-height: 1.6; min-height: 100vh; }
+        
+        /* Header 样式 */
+        .header { 
+            background: linear-gradient(135deg, #FF66B2, #FF3385); 
+            padding: 1.2rem 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            box-shadow: 0 4px 12px rgba(255, 102, 178, 0.2); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+        }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo i { font-size: 2.2rem; color: white; }
+        .logo h1 { color: white; font-size: 1.8rem; font-weight: 700; letter-spacing: 1px; }
+        .nav-links a { 
+            color: white; 
+            text-decoration: none; 
+            margin-left: 2rem; 
+            font-weight: 600; 
+            font-size: 1.1rem; 
+            transition: all 0.3s; 
+            padding: 8px 12px; 
+            border-radius: 20px; 
+        }
+        .nav-links a:hover { background-color: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        /* 页面标题 */
+        .page-title {
+            text-align: center;
+            color: #B3005E;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .page-subtitle {
+            text-align: center;
+            color: #FF3385;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* 搜索和统计区域 */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(255, 102, 178, 0.1);
+        }
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #FFB6D9;
+            border-radius: 50px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .search-box input:focus {
+            border-color: #FF66B2;
+            box-shadow: 0 0 0 3px rgba(255, 102, 178, 0.2);
+        }
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #FF66B2;
+            font-size: 1.2rem;
+        }
+        .link-count {
+            font-weight: 600;
+            color: #B3005E;
+            background: #FFE6F2;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        
+        /* 链接卡片样式 - 一行一个 */
+        .link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin-bottom: 3rem;
+        }
+        .link-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(255, 102, 178, 0.1);
+            transition: all 0.3s;
+            border-left: 6px solid #FF66B2;
+        }
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 102, 178, 0.2);
+        }
+        .link-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #FFB6D9, #FF66B2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        .link-icon i {
+            font-size: 1.8rem;
+            color: white;
+        }
+        .link-content {
+            flex: 1;
+        }
+        .link-content h3 {
+            color: #B3005E;
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+        .link-content p {
+            color: #5A003A;
+            font-size: 0.95rem;
+            opacity: 0.8;
+        }
+        .link-arrow {
+            color: #FF66B2;
+            font-size: 1.5rem;
+            margin-left: 1rem;
+            transition: transform 0.3s;
+        }
+        .link-card:hover .link-arrow {
+            transform: translateX(5px);
+        }
+        .link-card a {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* 分类标签 */
+        .link-tag {
+            display: inline-block;
+            background: #FFE6F2;
+            color: #FF3385;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        /* 页脚样式 */
+        .footer {
+            background: linear-gradient(135deg, #FF66B2, #FF3385);
+            color: white;
+            padding: 2.5rem 5%;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        
+        /* 返回按钮 */
+        .back-home {
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .back-home a {
+            display: inline-block;
+            padding: 12px 30px;
+            background: white;
+            color: #FF3385;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 2px solid #FFB6D9;
+        }
+        .back-home a:hover {
+            background: #FFB6D9;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        /* 无结果提示 */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 15px;
+            color: #5A003A;
+            font-size: 1.2rem;
+            display: none;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header { flex-direction: column; gap: 1rem; }
+            .nav-links a { margin: 0 0.5rem; font-size: 1rem; }
+            .controls { flex-direction: column; gap: 1rem; }
+            .search-box { max-width: 100%; }
+            .link-card { padding: 1.2rem; }
+            .link-icon { width: 50px; height: 50px; margin-right: 1rem; }
+            .link-icon i { font-size: 1.5rem; }
+            .link-content h3 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-compass"></i>
+            <h1>四季亭导航站</h1>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="../system/web/about.html"><i class="fas fa-info-circle"></i> 关于</a>
+        </nav>
+    </header>
+    
+    <main class="container">
+        <h1 class="page-title">跳转链接</h1>
+        <p class="page-subtitle">classin群聊链接，点击卡片即可跳转</p>
+        
+        <!-- 搜索和统计区域 -->
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索链接...">
+            </div>
+            <div class="link-count">
+                共 <span id="totalLinks">15</span> 个链接
+            </div>
+        </div>
+        
+        <!-- 链接列表 -->
+        <div class="link-list" id="linkList">
+            <!-- 链接卡片1 -->
+            <div class="link-card" data-category="官方群聊" data-title="281864003">
+                <a href="https://www.eeo.cn/s/a/?cid=281864003" target="_blank">
+                    <div class="link-icon">
+                        <i class="fas fa-cloud-download-alt"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3>官方项目:永久聊天群</h3>
+                        <p>1</p>
+                        <span class="link-tag">281864003</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片2 -->
+            <div class="link-card" data-category="Music" data-title="295205887">
+                <a href="https://www.classin.com/s/a/?cid=295205887" target="_blank">
+                    <div class="link-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3>班级名：Hello 酷狗！（Online Music Class）</h3>
+                        <p>全cl首个使用机器人点歌群聊</p>
+                        <span class="link-tag">295205887</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片3 -->
+            <div class="link-card" data-category="清篱" data-title="279289745">
+                <a href=https://www.eeo.cn/s/a/?cid=210079055" target="_blank">
+                    <div class="link-icon">
+                        <i class="fab fa-qq"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3>班级名：皇宫</h3>
+                        <p>近似于古代制度的群聊</p>
+                        <span class="link-tag">279289745</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片4 -->
+            <div class="link-card" data-category=">AD老师" data-title="295170341">
+                <a href="https://www.classin.com/s/a/?cid=295170341" target="_blank">
+                    <div class="link-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3>班级名：开始学</h3>
+                        <p>欢迎各位同学加入 本群分享学习资料以及学习心得+方法</p>
+                        <span class="link-tag">295170341</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片5 -->
+            <div class="link-card" data-category="早说" data-title="294679959">
+                <a href="https://www.eeo.cn/s/a/?cid=294679959" target="_blank">
+                    <div class="link-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3>班级名：有人陪我熬夜吗</h3>
+                        <p>1</p>
+                        <span class="link-tag">294679959</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片6 -->
+            <div class="link-card" data-category="㏇ " data-title="291952217">
+                <a href="https://www.classin.com/s/a/?cid=291952217" target="_blank">
+                    <div class="link-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3>* 班级名：vx扩列➕</h3>
+                        <p>vx扩列➕</p>
+                        <span class="link-tag">291952217</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片7 -->
+            <div class="link-card" data-category="null" data-title="292245095">
+                <a href="https://www.eeo.cn/s/a/?cid=292245095" target="_blank">
+                    <div class="link-icon">
+                        <i class="fab fa-mdn"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3> 班级名：₍˄·͈༝·͈˄*₎◞ ̑̑</h3>
+                        <p>₍˄·͈༝·͈˄*₎◞ ̑̑</p>
+                        <span class="link-tag">292245095</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片8 -->
+            <div class="link-card" data-category="清篱" data-title="210079055">
+                <a href="https://fontawesome.com" target="_blank">
+                    <div class="link-icon">
+                        <i class="fab fa-font-awesome"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3>班级名：Sue fell</h3>
+                        <p>死群聊</p>
+                        <span class="link-tag">210079055</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片9 -->
+            <div class="link-card" data-category="学习" data-title="菜鸟教程">
+                <a href="https://www.runoob.com" target="_blank">
+                    <div class="link-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3>菜鸟教程</h3>
+                        <p>编程学习网站，提供多种编程语言教程</p>
+                        <span class="link-tag">学习</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- 链接卡片10 -->
+            <div class="link-card" data-category="昀酌" data-title="295067345">
+                <a href="https://www.eeo.cn/s/a/?cid=295067345" target="_blank">
+                    <div class="link-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="link-content">
+                        <h3> 班级：2026，迎新年</h3>
+                        <p>2026，迎新年</p>
+                        <span class="link-tag">295067345</span>
+                    </div>
+                    <div class="link-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 无结果提示 -->
+        <div class="no-results" id="noResults">
+            <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 1rem; color: #FFB6D9;"></i>
+            <h3>未找到匹配的链接</h3>
+            <p>请尝试其他搜索关键词</p>
+        </div>
+        
+        <!-- 返回首页按钮 -->
+        <div class="back-home">
+            <a href="index.html"><i class="fas fa-arrow-left"></i> 返回首页</a>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>© 2025 - 2026 四季亭</p>
+        <p>当前页面共 <span id="currentCount">15</span> 个链接</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const linkCards = document.querySelectorAll('.link-card');
+            const noResults = document.getElementById('noResults');
+            const totalLinksSpan = document.getElementById('totalLinks');
+            const currentCountSpan = document.getElementById('currentCount');
+            
+            // 初始化链接计数
+            const totalLinks = linkCards.length;
+            totalLinksSpan.textContent = totalLinks;
+            currentCountSpan.textContent = totalLinks;
+            
+            // 搜索功能
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                let visibleCount = 0;
+                
+                linkCards.forEach(card => {
+                    const title = card.getAttribute('data-title').toLowerCase();
+                    const category = card.getAttribute('data-category').toLowerCase();
+                    const content = card.querySelector('.link-content').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || 
+                        category.includes(searchTerm) || 
+                        content.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // 更新当前可见链接数
+                currentCountSpan.textContent = visibleCount;
+                
+                // 显示/隐藏无结果提示
+                if (visibleCount === 0 && searchTerm !== '') {
+                    noResults.style.display = 'block';
+                } else {
+                    noResults.style.display = 'none';
+                }
+            });
+            
+            // 为所有内部链接添加平滑滚动效果
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        e.preventDefault();
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // 添加卡片点击动画
+            linkCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 如果点击的是链接本身，不添加额外动画
+                    if (e.target.tagName === 'A' || e.target.closest('a')) {
+                        return;
+                    }
+                    
+                    // 否则触发链接点击
+                    const link = this.querySelector('a');
+                    if (link) {
+                        link.click();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
