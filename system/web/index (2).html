@@ -35,6 +35,168 @@
             .hero h2 { font-size: 2rem; }
             .categories { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
         }
+
+        /* ========== 音乐播放器控件内嵌CSS ========== */
+        #music-player-container {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            z-index: 10000;
+            display: flex;
+            height: 80px;
+            transition: right 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        #music-player-container.collapsed {
+            right: -300px;
+        }
+        #player-handle {
+            width: 40px;
+            height: 100%;
+            background: linear-gradient(135deg, #FF66B2, #FF3385);
+            border-radius: 15px 0 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: -3px 5px 15px rgba(255, 102, 178, 0.3);
+            transition: all 0.3s;
+            z-index: 10001;
+            flex-shrink: 0;
+        }
+        #player-handle:hover {
+            background: linear-gradient(135deg, #FF3385, #FF0066);
+            transform: translateX(-3px);
+            box-shadow: -5px 7px 20px rgba(255, 102, 178, 0.4);
+        }
+        #player-handle i {
+            font-size: 1.5rem;
+            color: white;
+            transition: transform 0.3s;
+        }
+        #music-player-container:not(.collapsed) #player-handle i {
+            transform: rotate(180deg);
+        }
+        #music-player {
+            width: 300px;
+            height: 100%;
+            background: white;
+            border-radius: 15px 0 0 15px;
+            box-shadow: -5px 5px 25px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border-left: 6px solid #FF66B2;
+            flex-shrink: 0;
+        }
+        .now-playing {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .song-title {
+            color: #B3005E;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .song-artist {
+            color: #5A003A;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .progress-container {
+            margin-bottom: 15px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #FFE6F2;
+            border-radius: 2px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #FF66B2, #FF3385);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #5A003A;
+        }
+        .player-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .control-btn {
+            background: #FFE6F2;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF3385;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .control-btn:hover {
+            background: #FFB6D9;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .control-btn.play-pause {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #FF66B2, #FF3385);
+            color: white;
+        }
+        .control-btn.play-pause:hover {
+            background: linear-gradient(135deg, #FF3385, #FF0066);
+            transform: scale(1.05) translateY(-2px);
+        }
+        .player-status {
+            font-size: 0.8rem;
+            color: #FF3385;
+            text-align: center;
+            margin-top: 5px;
+            min-height: 1em;
+        }
+        @media (max-width: 768px) {
+            #music-player { width: 250px; }
+            #music-player-container.collapsed { right: -250px; }
+            .song-title { font-size: 1rem; }
+            .control-btn { width: 36px; height: 36px; font-size: 1rem; }
+            .control-btn.play-pause { width: 44px; height: 44px; font-size: 1.3rem; }
+        }
+        @media (max-width: 480px) {
+            #music-player { width: 220px; }
+            #music-player-container.collapsed { right: -220px; }
+            #player-handle { width: 36px; }
+        }
+        @media (max-height: 600px) {
+            #music-player-container { top: 100px; }
+        }
     </style>
 </head>
 <body>
@@ -82,5 +244,450 @@
         </div>
     </main>
     <footer class="footer" id="about"></footer>
+    
+    <!-- 音乐播放器控件 - 固定定位在浏览器右侧边缘 -->
+    <div id="music-player-container" class="collapsed">
+        <!-- 箭头按钮 - 始终可见 -->
+        <div id="player-handle" title="展开/收起播放器">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+
+        <!-- 播放器主体面板 - 简化版 -->
+        <div id="music-player">
+            <!-- 当前播放信息 -->
+            <div class="now-playing">
+                <div class="song-title" id="current-song-title">等待加载音乐...</div>
+                <div class="song-artist" id="current-song-artist">音乐库</div>
+            </div>
+
+            <!-- 播放进度条 -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time-info">
+                    <span id="current-time-display">0:00</span>
+                    <span id="total-time-display">0:00</span>
+                </div>
+            </div>
+
+            <!-- 播放控制按钮 -->
+            <div class="player-controls">
+                <button class="control-btn" id="prev-btn" title="上一首">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button class="control-btn play-pause" id="play-btn" title="播放">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="control-btn" id="next-btn" title="下一首">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+
+            <!-- 状态指示器 -->
+            <div class="player-status" id="player-status">准备就绪</div>
+        </div>
+    </div>
+    
+    <!-- 内嵌音乐播放器控制JS -->
     <script>
-        document.addEventL
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("✅ 页面加载完成，开始初始化播放器...");
+            
+            // 播放器状态
+            const playerState = {
+                isPlaying: false,
+                currentSongIndex: 0,
+                playlist: [],
+                isLoading: false
+            };
+
+            // GitHub音乐仓库配置
+            const musicConfig = {
+                baseUrl: "https://luo202044.github.io/classinapi/",
+                apiFile: "api.txt",
+                getApiUrl() {
+                    return `${this.baseUrl}${this.apiFile}`;
+                },
+                getMusicUrl(filename) {
+                    const cleanFilename = filename.trim();
+                    return `${this.baseUrl}${cleanFilename}`;
+                }
+            };
+
+            // DOM元素
+            const musicPlayerContainer = document.getElementById('music-player-container');
+            const playerHandle = document.getElementById('player-handle');
+            const playBtn = document.getElementById('play-btn');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const progress = document.getElementById('progress');
+            const currentTimeDisplay = document.getElementById('current-time-display');
+            const totalTimeDisplay = document.getElementById('total-time-display');
+            const currentSongTitle = document.getElementById('current-song-title');
+            const currentSongArtist = document.getElementById('current-song-artist');
+            const playerStatus = document.getElementById('player-status');
+
+            // 创建音频对象
+            const audio = new Audio();
+            audio.volume = 0.7;
+
+            // 从文件名提取友好的显示名称
+            function getFriendlyDisplayName(filename) {
+                // 移除文件扩展名
+                let name = filename.replace(/\.[^/.]+$/, "");
+                
+                // 常见分隔符替换为空格
+                name = name.replace(/[_-]/g, ' ');
+                
+                // 移除数字前缀（如 "01 - " 或 "01."）
+                name = name.replace(/^\d+[\s._-]*/, "");
+                
+                // 单词首字母大写
+                name = name.split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(' ');
+                
+                // 如果处理后为空，返回原始名称
+                return name.trim() || filename.replace(/\.[^/.]+$/, "");
+            }
+
+            // 初始化播放器
+            function initPlayer() {
+                console.log("🔄 初始化播放器...");
+                
+                // 设置初始状态
+                updatePlayerUI();
+                
+                // 设置事件监听器
+                initEventListeners();
+                
+                // 从GitHub获取音乐列表
+                fetchPlaylistFromGitHub();
+                
+                console.log("✅ 播放器初始化完成");
+            }
+
+            // 从GitHub API获取播放列表
+            async function fetchPlaylistFromGitHub() {
+                playerStatus.textContent = '正在从GitHub加载音乐列表...';
+                playerState.isLoading = true;
+                
+                try {
+                    const apiUrl = musicConfig.getApiUrl();
+                    console.log("🌐 请求音乐列表:", apiUrl);
+                    
+                    const response = await fetch(apiUrl, { cache: 'no-cache' });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP错误! 状态码: ${response.status}`);
+                    }
+                    
+                    const text = await response.text();
+                    console.log("📄 API文件内容:", text);
+                    
+                    // 解析文件列表，过滤空行和非音频文件
+                    const filenames = text.split('\n')
+                        .map(line => line.trim())
+                        .filter(line => {
+                            // 只保留音频文件
+                            if (line.length === 0) return false;
+                            const ext = line.split('.').pop().toLowerCase();
+                            return ['mp3', 'wav', 'ogg', 'm4a', 'aac'].includes(ext);
+                        });
+                    
+                    console.log("📝 解析到的音乐文件:", filenames);
+                    
+                    if (filenames.length === 0) {
+                        playerStatus.textContent = '未找到音频文件';
+                        currentSongTitle.textContent = '无可用音乐';
+                        currentSongArtist.textContent = '请检查音乐库';
+                        return;
+                    }
+                    
+                    // 构建播放列表
+                    playerState.playlist = filenames.map((filename, index) => {
+                        return {
+                            title: getFriendlyDisplayName(filename),
+                            artist: '音乐库',
+                            filename: filename,
+                            src: musicConfig.getMusicUrl(filename),
+                            index: index
+                        };
+                    });
+                    
+                    playerStatus.textContent = `已加载 ${playerState.playlist.length} 首歌曲`;
+                    
+                    // 加载第一首歌曲
+                    if (playerState.playlist.length > 0) {
+                        loadSong(0);
+                    }
+                    
+                } catch (error) {
+                    console.error('从仓库获取音乐列表失败:', error);
+                    playerStatus.textContent = '加载失败，请检查网络或配置';
+                    currentSongTitle.textContent = '加载失败';
+                    currentSongArtist.textContent = '检查音乐库配置';
+                    
+                    // 显示详细错误信息（仅开发时有用）
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        console.error('详细错误:', error);
+                        playerStatus.textContent += ` (${error.message})`;
+                    }
+                } finally {
+                    playerState.isLoading = false;
+                }
+            }
+
+            // 加载歌曲
+            function loadSong(index) {
+                if (playerState.playlist.length === 0) return;
+                if (index < 0 || index >= playerState.playlist.length) return;
+                
+                const song = playerState.playlist[index];
+                playerState.currentSongIndex = index;
+                
+                // 更新音频源
+                audio.src = song.src;
+                
+                // 更新UI显示
+                currentSongTitle.textContent = song.title;
+                currentSongArtist.textContent = song.artist;
+                
+                // 重置进度条
+                progress.style.width = "0%";
+                currentTimeDisplay.textContent = "0:00";
+                totalTimeDisplay.textContent = "0:00";
+                
+                // 更新播放器状态
+                playerStatus.textContent = `第 ${index + 1} 首 / 共 ${playerState.playlist.length} 首`;
+                
+                console.log(`🎶 加载歌曲: ${song.title} (${song.filename})`);
+                
+                // 如果之前是播放状态，自动播放新歌曲
+                if (playerState.isPlaying) {
+                    playSong();
+                }
+            }
+
+            // 播放/暂停歌曲
+            function togglePlayPause() {
+                if (playerState.playlist.length === 0) {
+                    playerStatus.textContent = '播放列表为空';
+                    return;
+                }
+                
+                if (playerState.isPlaying) {
+                    pauseSong();
+                } else {
+                    playSong();
+                }
+            }
+
+            // 播放歌曲
+            function playSong() {
+                if (!audio.src || playerState.playlist.length === 0) {
+                    playerStatus.textContent = '无可播放的音乐';
+                    return;
+                }
+                
+                audio.play()
+                    .then(() => {
+                        playerState.isPlaying = true;
+                        playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                        playBtn.title = "暂停";
+                        playerStatus.textContent = '播放中';
+                        console.log("▶️ 开始播放");
+                    })
+                    .catch(error => {
+                        console.error("播放失败:", error);
+                        playerStatus.textContent = '播放失败，请检查音频文件';
+                    });
+            }
+
+            // 暂停歌曲
+            function pauseSong() {
+                audio.pause();
+                playerState.isPlaying = false;
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playBtn.title = "播放";
+                playerStatus.textContent = '已暂停';
+                console.log("⏸️ 暂停播放");
+            }
+
+            // 上一首
+            function prevSong() {
+                if (playerState.playlist.length === 0) return;
+                
+                let newIndex = playerState.currentSongIndex - 1;
+                if (newIndex < 0) {
+                    newIndex = playerState.playlist.length - 1;
+                }
+                loadSong(newIndex);
+                if (playerState.isPlaying) {
+                    playSong();
+                }
+            }
+
+            // 下一首
+            function nextSong() {
+                if (playerState.playlist.length === 0) return;
+                
+                let newIndex = playerState.currentSongIndex + 1;
+                if (newIndex >= playerState.playlist.length) {
+                    newIndex = 0;
+                }
+                loadSong(newIndex);
+                if (playerState.isPlaying) {
+                    playSong();
+                }
+            }
+
+            // 格式化时间
+            function formatTime(seconds) {
+                if (!seconds || isNaN(seconds)) return "0:00";
+                
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }
+
+            // 展开/收起播放器
+            function togglePlayer() {
+                console.log("🖱️ 点击了箭头按钮");
+                const isCollapsed = musicPlayerContainer.classList.contains('collapsed');
+                
+                if (isCollapsed) {
+                    // 展开播放器
+                    musicPlayerContainer.classList.remove('collapsed');
+                    playerHandle.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                    playerHandle.title = "收起播放器";
+                    playerStatus.textContent = '播放器已展开';
+                    console.log("📖 展开播放器");
+                } else {
+                    // 收起播放器
+                    musicPlayerContainer.classList.add('collapsed');
+                    playerHandle.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                    playerHandle.title = "展开播放器";
+                    console.log("📕 收起播放器");
+                }
+            }
+
+            // 更新播放器UI状态
+            function updatePlayerUI() {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                playBtn.title = "播放";
+            }
+
+            // 初始化事件监听器
+            function initEventListeners() {
+                console.log("🔗 绑定事件监听器...");
+                
+                // 播放/暂停按钮
+                playBtn.addEventListener('click', togglePlayPause);
+                
+                // 上一首/下一首按钮
+                prevBtn.addEventListener('click', prevSong);
+                nextBtn.addEventListener('click', nextSong);
+                
+                // 进度条点击事件
+                progressBar.addEventListener('click', (e) => {
+                    if (!audio.duration) return;
+                    
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = (e.clientX - rect.left) / rect.width;
+                    audio.currentTime = percent * audio.duration;
+                });
+                
+                // 音频时间更新事件
+                audio.addEventListener('timeupdate', () => {
+                    if (audio.duration) {
+                        const percent = (audio.currentTime / audio.duration) * 100;
+                        progress.style.width = `${percent}%`;
+                        currentTimeDisplay.textContent = formatTime(audio.currentTime);
+                    }
+                });
+                
+                // 音频加载完成事件
+                audio.addEventListener('loadedmetadata', () => {
+                    totalTimeDisplay.textContent = formatTime(audio.duration);
+                });
+                
+                // 音频错误事件
+                audio.addEventListener('error', (e) => {
+                    console.error("音频加载错误:", e);
+                    playerStatus.textContent = '音频加载失败';
+                    
+                    // 自动尝试下一首
+                    if (playerState.playlist.length > 1) {
+                        setTimeout(() => nextSong(), 1000);
+                    }
+                });
+                
+                // 音频结束事件
+                audio.addEventListener('ended', () => {
+                    console.log("歌曲播放结束");
+                    if (playerState.playlist.length > 1) {
+                        nextSong();
+                    } else {
+                        pauseSong();
+                    }
+                });
+                
+                // 箭头按钮点击事件
+                playerHandle.addEventListener('click', togglePlayer);
+                
+                // 键盘快捷键
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space' && !e.target.matches('input, textarea')) {
+                        e.preventDefault();
+                        togglePlayPause();
+                    }
+                    
+                    if (e.code === 'ArrowLeft' && e.ctrlKey) {
+                        prevSong();
+                    }
+                    if (e.code === 'ArrowRight' && e.ctrlKey) {
+                        nextSong();
+                    }
+                });
+                
+                // 点击页面其他区域收起播放器
+                document.addEventListener('click', (e) => {
+                    if (!musicPlayerContainer.classList.contains('collapsed') &&
+                        !musicPlayerContainer.contains(e.target) &&
+                        e.target !== playerHandle &&
+                        !playerHandle.contains(e.target)) {
+                        
+                        musicPlayerContainer.classList.add('collapsed');
+                        playerHandle.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                        playerHandle.title = "展开播放器";
+                    }
+                });
+                
+                console.log("✅ 所有事件监听器绑定完成");
+
+                // 初始化播放器
+                initPlayer();
+                
+                // 全局导出
+                window.musicPlayer = {
+                    play: playSong,
+                    pause: pauseSong,
+                    togglePlayPause: togglePlayPause,
+                    prevSong: prevSong,
+                    nextSong: nextSong,
+                    loadSong: loadSong,
+                    togglePlayer: togglePlayer,
+                    getState: () => ({ ...playerState }),
+                    getCurrentSong: () => playerState.playlist[playerState.currentSongIndex] || null,
+                    getPlaylist: () => [...playerState.playlist],
+                    fetchPlaylistFromGitHub: fetchPlaylistFromGitHub,
+                    musicConfig: musicConfig
+                };
+            });
+        });
+    </script>
+</body>
+</html>

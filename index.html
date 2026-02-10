@@ -9,7 +9,7 @@
     <style>
         /* 以下是原有页面样式，保持不变 */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
-        body { background-color: #FFE6F2; color: #5A003A; line-height: 1.6; min-height: 100vh; }
+        body { background-color: #FFE6F2; color: #5A003A; line-height: 1.6; min-height: 100vh; padding-right: 300px; /* 为音乐播放器留出空间 */ }
         .header { background: linear-gradient(135deg, #FF66B2, #FF3385); padding: 1.2rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(255, 102, 178, 0.2); position: sticky; top: 0; z-index: 100; }
         .logo { display: flex; align-items: center; gap: 12px; }
         .logo i { font-size: 2.2rem; color: white; }
@@ -145,14 +145,7 @@
             text-align: center;
             margin-top: 3rem;
         }
-        @media (max-width: 768px) {
-            .header { flex-direction: column; gap: 1rem; }
-            .nav-links a { margin: 0 0.5rem; font-size: 1rem; }
-            .hero h2 { font-size: 2rem; }
-            .download-jump-card h2 { font-size: 1.7rem; }
-            .announcement-card { padding: 1.5rem; }
-        }
-
+        
         /* ========== 音乐播放器控件内嵌CSS ========== */
         #music-player-container {
             position: fixed;
@@ -305,14 +298,24 @@
             .song-title { font-size: 1rem; }
             .control-btn { width: 36px; height: 36px; font-size: 1rem; }
             .control-btn.play-pause { width: 44px; height: 44px; font-size: 1.3rem; }
+            body { padding-right: 250px; }
         }
         @media (max-width: 480px) {
             #music-player { width: 220px; }
             #music-player-container.collapsed { right: -220px; }
             #player-handle { width: 36px; }
+            body { padding-right: 220px; }
         }
         @media (max-height: 600px) {
             #music-player-container { top: 100px; }
+        }
+        
+        /* iframe容器样式 */
+        #content-frame {
+            width: 100%;
+            min-height: calc(100vh - 180px);
+            border: none;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -323,65 +326,14 @@
             <h1>四季亭导航站</h1>
         </div>
         <nav class="nav-links">
-            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
-            <a href="../system/web/about.html"><i class="fas fa-info-circle"></i> 关于</a>
+            <a href="#" onclick="loadPage('index.html')"><i class="fas fa-home"></i> 首页</a>
+            <a href="#" onclick="loadPage('system/web/about.html')"><i class="fas fa-info-circle"></i> 关于</a>
+            <a href="#" onclick="loadPage('system/web/center.html')"><i class="fas fa-th-large"></i> 资源分类</a>
         </nav>
     </header>
     
     <main class="container">
-        <!-- 下载跳转卡片 -->
-        <div class="download-jump-card">
-            <h2><i class="fas fa-external-link-alt"></i> 功能跳转</h2>
-            <p>点击下方按钮跳转到功能页面</p>
-            <a href="../system/web/center.html" target="_blank">点我跳转 <i class="fas fa-arrow-right"></i></a>
-        </div>
-        
-        <!-- Hero介绍部分 -->
-        <section class="hero" id="home">
-            <h2>欢迎来到四季亭导航站</h2>
-            <p>面向classin用户的公共平台</p>
-        </section>
-        
-        <!-- 公告部分 -->
-        <h2 class="section-title" id="announcements">公告</h2>
-        <div class="announcement-cards">
-            <!-- 公告卡片1 -->
-            <div class="announcement-card">
-                <h3><i class="fas fa-bullhorn"></i> 广告位招租</h3>
-                <p>添加收录网站链接(仅合法网站)，宣传你的群 (仅cl)</p>
-                <p>发邮件到邮箱 luoqing5203789@outlook.com</p>
-            </div>
-
-            <!-- 公告卡片2-->
-            <div class="announcement-card">
-                <h3><i class="fas fa-calendar-alt"></i> 未添加</h3>
-                <p>公告内容未添加，敬请期待后续更新。</p>
-                <p>1</p>
-            </div>
-            
-            <!-- 公告卡片3 -->
-            <div class="announcement-card">
-                <h3><i class="fas fa-calendar-alt"></i> 未添加</h3>
-                <p>公告内容未添加，敬请期待后续更新。</p>
-                <p>1</p>
-            </div>
-
-            <!-- 公告卡片4 -->
-            <div class="announcement-card">
-                <h3><i class="fas fa-calendar-alt"></i> 未添加</h3>
-                <p>公告内容未添加，敬请期待后续更新。</p>
-                <p>1</p>
-            </div>
-                         
-            <!-- 公告卡片0 - 粉色按钮卡片 -->
-            <div class="announcement-card pink-button-card">
-                <h3><i class="fas fa-newspaper"></i> 友链</h3>
-                <p>本站下载服务由雨云提供计算服务</p>
-                <a href="https://www.rainyun.com/luoqing_" target="_blank" class="pink-button">
-                    访问雨云 <i class="fas fa-external-link-alt"></i>
-                </a>
-            </div>
-        </div>
+        <iframe id="content-frame" src="index_content.html" title="内容区域"></iframe>
     </main>
     
     <footer class="footer">
@@ -810,27 +762,33 @@
                 });
                 
                 console.log("✅ 所有事件监听器绑定完成");
-            }
 
-            // 初始化播放器
-            initPlayer();
-            
-            // 全局导出
-            window.musicPlayer = {
-                play: playSong,
-                pause: pauseSong,
-                togglePlayPause: togglePlayPause,
-                prevSong: prevSong,
-                nextSong: nextSong,
-                loadSong: loadSong,
-                togglePlayer: togglePlayer,
-                getState: () => ({ ...playerState }),
-                getCurrentSong: () => playerState.playlist[playerState.currentSongIndex] || null,
-                getPlaylist: () => [...playerState.playlist],
-                fetchPlaylistFromGitHub: fetchPlaylistFromGitHub,
-                musicConfig: musicConfig
-            };
+                // 初始化播放器
+                initPlayer();
+                
+                // 全局导出
+                window.musicPlayer = {
+                    play: playSong,
+                    pause: pauseSong,
+                    togglePlayPause: togglePlayPause,
+                    prevSong: prevSong,
+                    nextSong: nextSong,
+                    loadSong: loadSong,
+                    togglePlayer: togglePlayer,
+                    getState: () => ({ ...playerState }),
+                    getCurrentSong: () => playerState.playlist[playerState.currentSongIndex] || null,
+                    getPlaylist: () => [...playerState.playlist],
+                    fetchPlaylistFromGitHub: fetchPlaylistFromGitHub,
+                    musicConfig: musicConfig
+                };
+            });
         });
+        
+        // 页面加载函数
+        function loadPage(pageUrl) {
+            document.getElementById('content-frame').src = pageUrl;
+            return false;
+        }
     </script>
     
     <!-- 原有的脚本 -->
