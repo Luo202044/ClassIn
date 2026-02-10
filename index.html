@@ -434,7 +434,6 @@
     
     <!-- 内嵌音乐播放器控制JS -->
     <script>
-        // 内联的 music-player.js 完整功能
         document.addEventListener('DOMContentLoaded', function() {
             console.log("✅ 页面加载完成，开始初始化播放器...");
             
@@ -446,12 +445,10 @@
                 isLoading: false
             };
 
-            // GitHub音乐仓库配置 - 需要替换为你的实际信息
+            // GitHub音乐仓库配置
             const musicConfig = {
-                // ========== 重要：请替换为你的GitHub音乐仓库Pages地址 ==========
-                baseUrl: "https://luo202044.github.io/classinapi/", // 请修改这里！
+                baseUrl: "https://luo202044.github.io/classinapi/",
                 apiFile: "api.txt",
-                // ===========================================================
                 getApiUrl() {
                     return `${this.baseUrl}${this.apiFile}`;
                 },
@@ -475,48 +472,42 @@
             const currentSongArtist = document.getElementById('current-song-artist');
             const playerStatus = document.getElementById('player-status');
 
-            // 检查关键DOM元素是否存在
-            if (!playerHandle) {
-                console.error("❌ 错误：未找到箭头按钮 (#player-handle)");
-                return;
-            }
-            if (!musicPlayerContainer) {
-                console.error("❌ 错误：未找到播放器容器 (#music-player-container)");
-                return;
-            }
-            
-            console.log("✅ 关键DOM元素加载正常");
-
             // 创建音频对象
             const audio = new Audio();
             audio.volume = 0.7;
 
+            // 从文件名提取友好的显示名称
+            function getFriendlyDisplayName(filename) {
+                // 移除文件扩展名
+                let name = filename.replace(/\.[^/.]+$/, "");
+                
+                // 常见分隔符替换为空格
+                name = name.replace(/[_-]/g, ' ');
+                
+                // 移除数字前缀（如 "01 - " 或 "01."）
+                name = name.replace(/^\d+[\s._-]*/, "");
+                
+                // 单词首字母大写
+                name = name.split(' ')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(' ');
+                
+                // 如果处理后为空，返回原始名称
+                return name.trim() || filename.replace(/\.[^/.]+$/, "");
+            }
+
             // 初始化播放器
             function initPlayer() {
                 console.log("🔄 初始化播放器...");
+                
                 // 设置初始状态
                 updatePlayerUI();
                 
                 // 设置事件监听器
                 initEventListeners();
                 
-                // 尝试从GitHub获取音乐列表
-                fetchPlaylistFromGitHub()
-                    .then(playlist => {
-                        if (playlist.length > 0) {
-                            playerStatus.textContent = '已加载音乐列表';
-                            console.log(`✅ 成功加载 ${playlist.length} 首歌曲`);
-                        } else {
-                            playerStatus.textContent = '音乐列表为空';
-                            console.log("⚠️ 音乐列表为空，使用模拟数据");
-                            loadMockPlaylist();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('初始化播放器失败:', error);
-                        playerStatus.textContent = '加载失败，使用模拟数据';
-                        loadMockPlaylist();
-                    });
+                // 从GitHub获取音乐列表
+                fetchPlaylistFromGitHub();
                 
                 console.log("✅ 播放器初始化完成");
             }
@@ -530,7 +521,7 @@
                     const apiUrl = musicConfig.getApiUrl();
                     console.log("🌐 请求音乐列表:", apiUrl);
                     
-                    const response = await fetch(apiUrl);
+                    const response = await fetch(apiUrl, { cache: 'no-cache' });
                     
                     if (!response.ok) {
                         throw new Error(`HTTP错误! 状态码: ${response.status}`);
@@ -539,20 +530,29 @@
                     const text = await response.text();
                     console.log("📄 API文件内容:", text);
                     
+                    // 解析文件列表，过滤空行和非音频文件
                     const filenames = text.split('\n')
                         .map(line => line.trim())
-                        .filter(line => line.length > 0);
+                        .filter(line => {
+                            // 只保留音频文件
+                            if (line.length === 0) return false;
+                            const ext = line.split('.').pop().toLowerCase();
+                            return ['mp3', 'wav', 'ogg', 'm4a', 'aac'].includes(ext);
+                        });
                     
                     console.log("📝 解析到的音乐文件:", filenames);
                     
+                    if (filenames.length === 0) {
+                        playerStatus.textContent = '未找到音频文件';
+                        currentSongTitle.textContent = '无可用音乐';
+                        currentSongArtist.textContent = '请检查音乐库';
+                        return;
+                    }
+                    
                     // 构建播放列表
                     playerState.playlist = filenames.map((filename, index) => {
-                        const displayName = filename
-                            .replace(/\.[^/.]+$/, "")
-                            .replace(/[_-]/g, ' ');
-                        
                         return {
-                            title: displayName,
+                            title: getFriendlyDisplayName(filename),
                             artist: '音乐库',
                             filename: filename,
                             src: musicConfig.getMusicUrl(filename),
@@ -567,48 +567,25 @@
                         loadSong(0);
                     }
                     
-                    return playerState.playlist;
                 } catch (error) {
                     console.error('从仓库获取音乐列表失败:', error);
-                    throw error;
+                    playerStatus.textContent = '加载失败，请检查网络或配置';
+                    currentSongTitle.textContent = '加载失败';
+                    currentSongArtist.textContent = '检查音乐库配置';
+                    
+                    // 显示详细错误信息（仅开发时有用）
+                    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                        console.error('详细错误:', error);
+                        playerStatus.textContent += ` (${error.message})`;
+                    }
                 } finally {
                     playerState.isLoading = false;
                 }
             }
 
-            // 加载模拟播放列表（备用方案）
-            function loadMockPlaylist() {
-                console.log("🎵 加载模拟播放列表");
-                
-                playerState.playlist = [
-                    {
-                        title: "模拟播放列表",
-                        artist: "模拟播放列表",
-                        filename: "song1.mp3",
-                        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-                    },
-                    {
-                        title: "模拟播放列表",
-                        artist: "模拟播放列表",
-                        filename: "song2.mp3",
-                        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
-                    },
-                    {
-                        title: "模拟播放列表",
-                        artist: "模拟播放列表",
-                        filename: "song3.mp3",
-                        src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
-                    }
-                ];
-                
-                // 加载第一首歌曲
-                if (playerState.playlist.length > 0) {
-                    loadSong(0);
-                }
-            }
-
             // 加载歌曲
             function loadSong(index) {
+                if (playerState.playlist.length === 0) return;
                 if (index < 0 || index >= playerState.playlist.length) return;
                 
                 const song = playerState.playlist[index];
@@ -617,7 +594,7 @@
                 // 更新音频源
                 audio.src = song.src;
                 
-                // 更新UI
+                // 更新UI显示
                 currentSongTitle.textContent = song.title;
                 currentSongArtist.textContent = song.artist;
                 
@@ -629,7 +606,7 @@
                 // 更新播放器状态
                 playerStatus.textContent = `第 ${index + 1} 首 / 共 ${playerState.playlist.length} 首`;
                 
-                console.log(`🎶 加载歌曲: ${song.title}`);
+                console.log(`🎶 加载歌曲: ${song.title} (${song.filename})`);
                 
                 // 如果之前是播放状态，自动播放新歌曲
                 if (playerState.isPlaying) {
@@ -653,6 +630,11 @@
 
             // 播放歌曲
             function playSong() {
+                if (!audio.src || playerState.playlist.length === 0) {
+                    playerStatus.textContent = '无可播放的音乐';
+                    return;
+                }
+                
                 audio.play()
                     .then(() => {
                         playerState.isPlaying = true;
@@ -663,7 +645,7 @@
                     })
                     .catch(error => {
                         console.error("播放失败:", error);
-                        playerStatus.textContent = '播放失败';
+                        playerStatus.textContent = '播放失败，请检查音频文件';
                     });
             }
 
@@ -714,7 +696,7 @@
                 return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
             }
 
-            // 展开/收起播放器 - 这是箭头按钮的核心功能
+            // 展开/收起播放器
             function togglePlayer() {
                 console.log("🖱️ 点击了箭头按钮");
                 const isCollapsed = musicPlayerContainer.classList.contains('collapsed');
@@ -747,12 +729,10 @@
                 
                 // 播放/暂停按钮
                 playBtn.addEventListener('click', togglePlayPause);
-                console.log("✅ 绑定播放/暂停按钮");
                 
                 // 上一首/下一首按钮
                 prevBtn.addEventListener('click', prevSong);
                 nextBtn.addEventListener('click', nextSong);
-                console.log("✅ 绑定上一首/下一首按钮");
                 
                 // 进度条点击事件
                 progressBar.addEventListener('click', (e) => {
@@ -768,7 +748,6 @@
                     if (audio.duration) {
                         const percent = (audio.currentTime / audio.duration) * 100;
                         progress.style.width = `${percent}%`;
-                        
                         currentTimeDisplay.textContent = formatTime(audio.currentTime);
                     }
                 });
@@ -782,6 +761,11 @@
                 audio.addEventListener('error', (e) => {
                     console.error("音频加载错误:", e);
                     playerStatus.textContent = '音频加载失败';
+                    
+                    // 自动尝试下一首
+                    if (playerState.playlist.length > 1) {
+                        setTimeout(() => nextSong(), 1000);
+                    }
                 });
                 
                 // 音频结束事件
@@ -794,9 +778,8 @@
                     }
                 });
                 
-                // ========== 关键：箭头按钮点击事件 ==========
+                // 箭头按钮点击事件
                 playerHandle.addEventListener('click', togglePlayer);
-                console.log("✅ 绑定箭头按钮点击事件");
                 
                 // 键盘快捷键
                 document.addEventListener('keydown', (e) => {
@@ -823,7 +806,6 @@
                         musicPlayerContainer.classList.add('collapsed');
                         playerHandle.innerHTML = '<i class="fas fa-chevron-left"></i>';
                         playerHandle.title = "展开播放器";
-                        console.log("🌍 点击外部区域，收起播放器");
                     }
                 });
                 
@@ -832,9 +814,6 @@
 
             // 初始化播放器
             initPlayer();
-            
-            // 测试箭头按钮功能
-            console.log("👉 请尝试点击右侧粉色箭头按钮");
             
             // 全局导出
             window.musicPlayer = {
