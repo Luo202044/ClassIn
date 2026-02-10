@@ -349,7 +349,7 @@
             <div class="announcement-card">
                 <h3><i class="fas fa-bullhorn"></i> 广告位招租</h3>
                 <p>添加收录网站链接(仅合法网站)，宣传你的群 (仅cl)</p>
-                <p>发邮件到邮箱 luoqing5207389@outlook.com</p>
+                <p>发邮件到邮箱 luoqing5203789@outlook.com</p>
             </div>
 
             <!-- 公告卡片2-->
@@ -400,7 +400,7 @@
             <!-- 当前播放信息 -->
             <div class="now-playing">
                 <div class="song-title" id="current-song-title">等待加载音乐...</div>
-                <div class="song-artist" id="current-song-artist">四季亭音乐库</div>
+                <div class="song-artist" id="current-song-artist">音乐库</div>
             </div>
 
             <!-- 播放进度条 -->
@@ -553,7 +553,7 @@
                         
                         return {
                             title: displayName,
-                            artist: '四季亭音乐库',
+                            artist: '音乐库',
                             filename: filename,
                             src: musicConfig.getMusicUrl(filename),
                             index: index
@@ -569,7 +569,7 @@
                     
                     return playerState.playlist;
                 } catch (error) {
-                    console.error('从GitHub获取音乐列表失败:', error);
+                    console.error('从仓库获取音乐列表失败:', error);
                     throw error;
                 } finally {
                     playerState.isLoading = false;
@@ -582,20 +582,20 @@
                 
                 playerState.playlist = [
                     {
-                        title: "春之序曲",
-                        artist: "四季亭乐团",
+                        title: "模拟播放列表",
+                        artist: "模拟播放列表",
                         filename: "song1.mp3",
                         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
                     },
                     {
-                        title: "夏日微风",
-                        artist: "四季亭乐队",
+                        title: "模拟播放列表",
+                        artist: "模拟播放列表",
                         filename: "song2.mp3",
                         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
                     },
                     {
-                        title: "秋日私语",
-                        artist: "四季亭音乐社",
+                        title: "模拟播放列表",
+                        artist: "模拟播放列表",
                         filename: "song3.mp3",
                         src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
                     }
