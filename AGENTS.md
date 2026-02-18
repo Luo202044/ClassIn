@@ -1,4 +1,4 @@
-﻿# ClassIn导航站项目说明
+# ClassIn导航站项目说明
 
 ## 项目概述
 
@@ -7,40 +7,48 @@ ClassIn导航站是一个面向ClassIn用户的公共导航平台，名为"四�
 ## 技术栈
 
 - **前端技术**: HTML5, CSS3, JavaScript (ES6+)
-- **样式实现**: 主要使用内联CSS样式，包含响应式设计
+- **样式实现**: 主要使用内联CSS样式和独立CSS文件，包含响应式设计
 - **音乐播放器**: 独立的CSS和JS文件实现可折叠播放器
 - **图标库**: Font Awesome 6.4.0
 - **部署平台**: 基于GitHub Pages或类似Web服务器部署
-- **域名**: classin.luoqing5203789.dpdns.org (通过CNAME文件配置)
+- **域名**: classin.xn--bgtt50a8xt.cn (通过CNAME文件配置)
 
-
-D:\2\ClassIn-main\
-├── about.html    # 关于页面，包含开发者介绍
-├── 404.html              # 404错误页面
-├── CNAME                 # 自定义域名配置
-├── index.html            # 主页，包含内嵌音乐播放器
-├── README.md             # 项目说明文件
-├── AGENTS.md             # 本项目说明文件
-└── system/               # 系统功能目录
-    ├── api/              # API接口相关
-    │   ├── 1             # 占位文件
-    │   ├── music-player.css  # 音乐播放器样式
-    │   └── music-player.js   # 音乐播放器JavaScript代码
-    ├── images/           # 图片资源
-    │   ├── 0             # 占位文件
-    │   ├── user1.jpg     # 开发者头像1
-    │   └── user2.jpg     # 开发者头像2
-    ├── jump/             # 跳转功能目录
-    │   ├── classin/      # ClassIn相关跳转
-    │   │   ├── 3         # 占位文件
-    │   │   ├── center.html   # ClassIn分类中心页面
-    │   │   └── page1.html    # ClassIn群组详细页面
-    │   └── web/          # 网页跳转相关
-    │       └── 1         # 占位文件
-    └── web/              # 网页功能目录
-        ├── 0             # 占位文件
-        ├── center.html   # 资源分类中心页面
-        └── index (2).html # 备用首页（废弃
+```
+D:\1\ClassIn-main\
+├── 404.html                    # 404错误页面
+├── about.html                  # 关于页面，包含开发者介绍
+├── AGENTS.md                   # 项目说明文件
+├── CNAME                       # 自定义域名配置
+├── index.html                  # 主页，包含内嵌音乐播放器
+├── index_content.html          # 首页内容文件
+├── index_content.html.bak      # 首页内容备份
+├── inex.html                   # 可能是index.html的错误命名备份
+├── README.md                   # 项目说明文件
+├── system/                     # 系统功能目录
+│   ├── api/                    # API接口相关
+│   │   ├── 1                   # 占位文件
+│   │   ├── music-player.css    # 音乐播放器样式
+│   │   └── music-player.js     # 音乐播放器JavaScript代码
+│   ├── images/                 # 图片资源
+│   │   ├── 0                   # 占位文件
+│   │   ├── user1.jpg           # 开发者头像1
+│   │   └── user2.jpg           # 开发者头像2
+│   ├── jump/                   # 跳转功能目录
+│   │   ├── classin/            # ClassIn相关跳转
+│   │   │   ├── 3               # 占位文件
+│   │   │   ├── center.html     # ClassIn分类中心页面
+│   │   │   ├── page1.html      # ClassIn群组详细页面
+│   │   │   └── page2.html      # ClassIn群组详细页面
+│   │   └── web/                # 网页跳转相关
+│   │       └── 1               # 占位文件
+│   └── web/                    # 网页功能目录
+│       ├── 0                   # 占位文件
+│       ├── about.html          # 关于页面
+│       ├── center.html         # 资源分类中心页面
+│       └── index (2).html      # 备用首页
+├── web2/                       # 额外网页目录
+│   └── use.html                # 使用协议页面
+└── 新建文本文档.txt           # 临时文本文件
 ```
 
 ## 功能特性
@@ -60,6 +68,7 @@ D:\2\ClassIn-main\
 - 键盘快捷键支持（空格键播放/暂停，Ctrl+左/右箭头切换歌曲）
 - 播放列表管理，支持自动循环播放
 - 自适应移动端和桌面端显示
+- 支持多种音频格式：MP3, WAV, OGG, M4A, AAC
 
 ### 3. 导航分类系统
 - 资源分类中心页面（center.html）
@@ -95,7 +104,7 @@ const musicConfig = {
 ## 部署说明
 
 1. 项目可通过GitHub Pages或其他Web服务器部署
-2. 通过CNAME文件配置自定义域名（classin.luoqing5203789.dpdns.org）
+2. 通过CNAME文件配置自定义域名（classin.xn--bgtt50a8xt.cn）
 3. 音乐播放器功能需要配置GitHub Pages仓库存放音乐文件
 4. 确保所有路径引用正确（特别是跨目录的链接）
 5. 检查音乐播放器配置，确保GitHub仓库地址正确
@@ -138,3 +147,23 @@ const musicConfig = {
 - 所有页面支持移动端适配
 - 项目结构清晰，模块化设计便于维护
 - CSS主要使用内联样式，便于快速开发和部署
+
+## 架构说明
+
+### 前端架构
+- **HTML**: 结构化内容展示
+- **CSS**: 样式和响应式设计
+- **JavaScript**: 交互逻辑和动态功能
+- **Font Awesome**: 图标支持
+
+### 音乐播放器架构
+- **独立组件**: 音乐播放器是独立的CSS/JS组件
+- **网络请求**: 从GitHub Pages获取音乐列表
+- **播放控制**: 包含播放、暂停、上一首、下一首功能
+- **进度控制**: 时间显示和进度条拖拽功能
+- **响应式设计**: 适配桌面和移动设备
+
+### 部署架构
+- **静态网站**: 纯静态HTML/CSS/JS文件
+- **CDN支持**: 通过GitHub Pages提供CDN加速
+- **自定义域名**: 通过CNAME文件配置

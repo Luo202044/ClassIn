@@ -1,233 +1,136 @@
-/* music-player.css - 音乐播放器控件样式 */
+/* music-player.css - 音乐播放器控件样式 - 与center.html保持一致的样式 */
 
-/* 音乐播放器样式 - 重新设计 */
+/* 音乐播放器样式 */
 #music-player-container {
     position: fixed;
     top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    z-index: 10000;
-    display: flex;
-    height: 80px; /* 播放器高度 */
-    transition: right 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    pointer-events: none; /* 允许点击穿透到箭头按钮 */
-}
-
-/* 播放器收起状态（默认） */
-#music-player-container.collapsed {
-    right: -300px; /* 只留下箭头部分可见 */
-}
-
-/* 箭头按钮 - 始终可见 */
-#player-handle {
-    width: 40px;
-    height: 100%; /* 与播放器等高 */
+    right: -300px;
+    width: 300px;
+    height: 400px;
     background: linear-gradient(135deg, #FF66B2, #FF3385);
-    border-radius: 15px 0 0 15px;
+    border-radius: 10px 0 0 10px;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+#music-player-container.collapsed {
+    right: 0;
+}
+
+#player-handle {
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    background: linear-gradient(135deg, #FF66B2, #FF3385);
+    border-radius: 10px 0 0 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    box-shadow: -3px 5px 15px rgba(255, 102, 178, 0.3);
-    transition: all 0.3s;
-    z-index: 10001;
-    flex-shrink: 0;
-    pointer-events: auto; /* 恢复箭头按钮的点击事件 */
-}
-
-#player-handle:hover {
-    background: linear-gradient(135deg, #FF3385, #FF0066);
-    transform: translateX(-3px);
-    box-shadow: -5px 7px 20px rgba(255, 102, 178, 0.4);
-}
-
-#player-handle i {
-    font-size: 1.5rem;
     color: white;
-    transition: transform 0.3s;
+    cursor: pointer;
+    box-shadow: -3px 0 8px rgba(0, 0, 0, 0.2);
 }
 
-/* 播放器展开时箭头方向 */
-#music-player-container:not(.collapsed) #player-handle i {
-    transform: rotate(180deg);
-}
-
-/* 播放器主体面板 - 简化版 */
-#music-player {
-    width: 300px;
-    height: 100%;
-    background: white;
-    border-radius: 15px 0 0 15px;
-    box-shadow: -5px 5px 25px rgba(0, 0, 0, 0.1);
+#player-content {
     padding: 15px;
-    display: flex;
-    flex-direction: column;
-    border-left: 6px solid #FF66B2;
-    flex-shrink: 0;
-    pointer-events: auto; /* 恢复播放器面板的点击事件 */
-}
-
-/* 当前播放信息 */
-.now-playing {
+    color: white;
+    overflow-y: auto;
     flex: 1;
+}
+
+.player-controls {
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    margin-bottom: 10px;
-    overflow: hidden;
+    gap: 10px;
+    margin: 10px 0;
 }
 
-.song-title {
-    color: #B3005E;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.player-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
 }
 
-.song-artist {
-    color: #5A003A;
-    font-size: 0.9rem;
-    opacity: 0.8;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.player-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
-/* 进度条 */
+.player-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .progress-container {
-    margin-bottom: 15px;
+    margin: 10px 0;
 }
 
-.progress-bar {
+#progress-bar {
     width: 100%;
-    height: 4px;
-    background: #FFE6F2;
-    border-radius: 2px;
-    margin-bottom: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
     cursor: pointer;
     overflow: hidden;
 }
 
-.progress {
+#progress {
     height: 100%;
-    background: linear-gradient(to right, #FF66B2, #FF3385);
-    border-radius: 2px;
     width: 0%;
+    background: white;
     transition: width 0.1s;
 }
 
-.time-info {
+.time-display {
     display: flex;
     justify-content: space-between;
     font-size: 0.8rem;
-    color: #5A003A;
-}
-
-/* 播放控制按钮 - 简化版 */
-.player-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.control-btn {
-    background: #FFE6F2;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #FF3385;
-    font-size: 1.2rem;
-    transition: all 0.3s;
-    flex-shrink: 0;
-}
-
-.control-btn:hover {
-    background: #FFB6D9;
-    color: white;
-    transform: translateY(-2px);
-}
-
-.control-btn.play-pause {
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-    background: linear-gradient(135deg, #FF66B2, #FF3385);
-    color: white;
-}
-
-.control-btn.play-pause:hover {
-    background: linear-gradient(135deg, #FF3385, #FF0066);
-    transform: scale(1.05) translateY(-2px);
-}
-
-/* 状态指示器 */
-.player-status {
-    font-size: 0.8rem;
-    color: #FF3385;
-    text-align: center;
     margin-top: 5px;
-    min-height: 1em;
 }
 
-/* 响应式设计 */
+#current-song-info {
+    text-align: center;
+    margin: 10px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#player-status {
+    text-align: center;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
 @media (max-width: 768px) {
-    #music-player {
-        width: 250px;
+    #music-player-container {
+        width: 100%;
+        height: 120px;
+        top: auto;
+        bottom: 0;
+        right: -100%;
+        border-radius: 10px 10px 0 0;
     }
     
     #music-player-container.collapsed {
-        right: -250px;
-    }
-    
-    .song-title {
-        font-size: 1rem;
-    }
-    
-    .control-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-    }
-    
-    .control-btn.play-pause {
-        width: 44px;
-        height: 44px;
-        font-size: 1.3rem;
-    }
-}
-
-@media (max-width: 480px) {
-    #music-player {
-        width: 220px;
-    }
-    
-    #music-player-container.collapsed {
-        right: -220px;
+        right: 0;
     }
     
     #player-handle {
-        width: 36px;
-    }
-}
-
-/* 为移动端优化，确保播放器不被键盘遮挡 */
-@media (max-height: 600px) {
-    #music-player-container {
-        top: 100px;  /* 在矮屏幕上降低位置 */
-    }
-}
-
-/* 确保播放器不会遮挡页面的其他交互元素 */
-@media (max-width: 1024px) {
-    #music-player-container {
-        z-index: 9999; /* 稍微降低z-index，避免遮挡模态框等元素 */
+        display: none;
     }
 }
