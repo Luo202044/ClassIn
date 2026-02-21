@@ -20,12 +20,24 @@ jobs:
           # Fetch all commit history for full Git operations
           fetch-depth: 0
 
+      # 验证 DEPLOY_KEY 是否存在
+      - name: Verify DEPLOY_KEY exists
+        run: |
+          if [ -z "${{ secrets.DEPLOY_KEY }}" ]; then
+            echo "ERROR: DEPLOY_KEY secret is not set. Please configure the DEPLOY_KEY secret in your repository settings."
+            exit 1
+          fi
+          echo "DEPLOY_KEY is configured"
+
       # 设置 SSH
       # Setup SSH
       - name: Setup SSH for git access
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY }}
+        continue-on-error: true
 
       # 部署到另一个仓库并触发 GitHub Pages 构建
       # Deploy to another repository and trigger GitHub Pages build
