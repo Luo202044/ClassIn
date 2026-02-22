@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cottie - 首页</title>
+  <title>Cottie - 网页跳转</title>
   <link rel="icon" type="image/svg+xml" href="assets/vite.svg">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="css/navbar.css">
   <link rel="stylesheet" href="css/footer.css">
   <link rel="stylesheet" href="css/music-player.css">
-  <link rel="stylesheet" href="css/pages/home.css">
+  <link rel="stylesheet" href="css/pages/weblinks.css">
 </head>
 <body>
   <header class="navbar glass-panel">
@@ -23,7 +23,7 @@
     </div>
     
     <nav class="navbar-nav">
-      <a href="index.html" class="nav-link active">
+      <a href="index.html" class="nav-link">
         <i class="fas fa-home"></i>
         <span>首页</span>
       </a>
@@ -42,6 +42,10 @@
     </nav>
     
     <div class="navbar-actions">
+      <a href="center.html" class="back-btn-nav">
+        <i class="fas fa-arrow-left"></i>
+        <span>返回资源中心</span>
+      </a>
       <button class="theme-toggle" id="themeToggle" title="切换主题">
         <i class="fas fa-moon"></i>
       </button>
@@ -52,7 +56,11 @@
     </button>
     
     <nav class="mobile-nav glass-panel" id="mobileNav">
-      <a href="index.html" class="mobile-nav-link active">
+      <a href="center.html" class="mobile-nav-link back-link-mobile">
+        <i class="fas fa-arrow-left"></i>
+        <span>返回资源中心</span>
+      </a>
+      <a href="index.html" class="mobile-nav-link">
         <i class="fas fa-home"></i>
         <span>首页</span>
       </a>
@@ -71,75 +79,14 @@
     </nav>
   </header>
 
-  <main class="home-page">
+  <main class="weblinks-page">
     <section class="hero-section anim-entry">
-      <div class="hero-content">
-        <h1 class="hero-title">欢迎来到 Cottie</h1>
-        <p class="hero-subtitle">面向ClassIn用户的公共导航平台</p>
-        <div class="hero-actions">
-          <a href="center.html" class="btn btn-primary hero-btn">
-            <i class="fas fa-compass"></i>
-            进入资源中心
-          </a>
-        </div>
-      </div>
+      <h1 class="hero-title">网页跳转</h1>
+      <p class="hero-subtitle">本站收录的网站链接</p>
     </section>
     
     <section class="section container">
-      <h2 class="section-title anim-entry anim-2">
-        <i class="fas fa-bullhorn"></i>
-        公告
-      </h2>
-      
-      <div class="announcements-grid">
-        <div class="announcement-card anim-entry anim-3">
-          <h3 class="announcement-title">
-            <i class="fas fa-bullhorn"></i>
-            广告位招租
-          </h3>
-          <div class="announcement-content">
-            <p>添加收录网站链接(仅合法网站)，宣传你的群 (仅cl)</p>
-            <p>发邮件到邮箱 luoqing5203789@outlook.com</p>
-          </div>
-        </div>
-        
-        <div class="announcement-card anim-entry anim-4">
-          <h3 class="announcement-title">
-            <i class="fas fa-code"></i>
-            功能更新
-          </h3>
-          <div class="announcement-content">
-            <p>网站已转换为纯HTML静态页面</p>
-            <p>新增主题切换功能</p>
-            <p>优化音乐播放器体验</p>
-          </div>
-        </div>
-        
-        <div class="announcement-card anim-entry anim-5">
-          <h3 class="announcement-title">
-            <i class="fas fa-lightbulb"></i>
-            使用提示
-          </h3>
-          <div class="announcement-content">
-            <p>点击右侧箭头展开音乐播放器</p>
-            <p>使用空格键播放/暂停音乐</p>
-            <p>Ctrl+左右箭头切换歌曲</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="announcement-card highlight anim-entry anim-6">
-        <h3 class="announcement-title">
-          <i class="fas fa-link"></i>
-          友链
-        </h3>
-        <div class="announcement-content">
-          <p>本站计算服务由雨云提供</p>
-          <a href="https://www.rainyun.com/luoqing_" target="_blank" rel="noopener noreferrer" class="friend-link">
-            访问雨云 <i class="fas fa-external-link-alt"></i>
-          </a>
-        </div>
-      </div>
+      <div class="links-grid" id="linksGrid"></div>
     </section>
   </main>
 
@@ -226,5 +173,6 @@
   <script src="js/theme.js"></script>
   <script src="js/music-player.js"></script>
   <script src="js/navbar.js"></script>
+  <script src="js/weblinks.js"></script>
 </body>
 </html>
