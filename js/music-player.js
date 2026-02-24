@@ -6,7 +6,7 @@ const CONFIG = {
       return `${this.baseUrl}${this.apiFile}`;
     },
     getMusicUrl(filename) {
-      return `${this.baseUrl}${encodeURIComponent(filename.trim())}`;
+      return `${this.baseUrl}music/${encodeURIComponent(filename.trim())}`;
     }
   }
 };
@@ -31,7 +31,7 @@ function getFriendlyDisplayName(filename) {
   const filenameWithoutExt = filename.replace(/\.[^/.]+$/, '');
   const normalized = filenameWithoutExt
     .replace(/[_]/g, ' ')
-    .replace(/^\d+[\s.-]*/, '')
+    .replace(/\^\d+[\s.-]*/, '')
     .replace(/\s+/g, ' ')
     .trim();
 
